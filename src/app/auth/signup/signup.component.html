@@ -1,11 +1,11 @@
 <section class="singup-form">
     <form fxLayout="column" fxLayoutAlign="center center" fxLayoutGap="10px" #f="ngForm" (ngSubmit)="onSubmit(f)">
         <mat-form-field>
-            <input 
-                type="email" 
-                matInput 
-                placeholder="your email" 
-                ngModel 
+            <input
+                type="email"
+                matInput
+                placeholder="your email"
+                ngModel
                 name="email"
                 email
                 required
@@ -15,11 +15,11 @@
         </mat-form-field>
 
         <mat-form-field hintLabel="Should be at least 6 characters long.">
-            <input 
-                type="password" 
-                matInput 
-                placeholder="Your password" 
-                ngModel 
+            <input
+                type="password"
+                matInput
+                placeholder="Your password"
+                ngModel
                 name="password"
                 required
                 minlength="6"
@@ -29,9 +29,9 @@
         </mat-form-field>
 
         <mat-form-field>
-            <input 
-                matInput 
-                placeholder="Your birthdate" 
+            <input
+                matInput
+                placeholder="Your birthdate"
                 [matDatepicker]="picker"
                 [max]="maxDate"
                 ngModel name="birthdate"
@@ -42,6 +42,7 @@
 
         <mat-checkbox labelPosition="after" ngModel name="agree" required color="primary">Agree to terms and Conditions.</mat-checkbox>
 
-        <button type="submit" mat-raised-button color="primary" [disabled]="f.invalid">Submit</button>
+        <button *ngIf="!isLoading" type="submit" mat-raised-button color="primary" [disabled]="f.invalid">Submit</button>
+        <mat-spinner *ngIf="isLoading"></mat-spinner>
     </form>
 </section>
