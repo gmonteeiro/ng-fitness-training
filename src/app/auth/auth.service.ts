@@ -4,15 +4,33 @@ import { Subject } from 'rxjs';
 import { AngularFireAuth } from '@angular/fire/auth';
 
 import { AuthData } from "./auth-data.model";
-import { User } from "./user.model";
+import { TrainingService } from '../training/training.service';
 
 @Injectable()
 export class AuthService {
     authChange = new Subject<boolean>();
-    private user: User | any;
+    private isAuthenticated = false;
 
-    constructor(private router: Router, private afAuth: AngularFireAuth){
+    constructor(
+      private router: Router,
+      private afAuth: AngularFireAuth,
+      private trainingService: TrainingService){
 
+    }
+
+    initAuthListener() {
+      this.afAuth.authState.subscribe(user => {
+        if(user){
+          this.isAuthenticated = true;
+          this.authChange.next(true);
+          this.router.navigate(['/training']);
+        }else{
+          this.trainingService.cancelSubscriptions();
+          this.authChange.next(false);
+          this.router.navigate(['/login']);
+          this.isAuthenticated = true;
+        }
+      });
     }
 
     registerUser(authData: AuthData) {
@@ -22,7 +40,6 @@ export class AuthService {
       )
       .then(result => {
         console.log(result);
-        this.authSuccessfully();
       })
       .catch(error => {
         console.log(error);
@@ -36,7 +53,6 @@ export class AuthService {
       )
       .then(result => {
         console.log(result);
-        this.authSuccessfully();
       })
       .catch(error => {
         console.log(error);
@@ -44,21 +60,10 @@ export class AuthService {
     }
 
     logout() {
-        this.user = null as any;
-        this.authChange.next(false);
-        this.router.navigate(['/login']);
-    }
-
-    getUser() {
-        return { ...this.user };
+      this.afAuth.signOut();
     }
 
     isAuth() {
-        return this.user != null;
-    }
-
-    private authSuccessfully() {
-        this.authChange.next(true);
-        this.router.navigate(['/training']);
+      return this.isAuthenticated;
     }
 }
