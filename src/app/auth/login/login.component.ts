@@ -12,7 +12,7 @@ import { Subscription } from 'rxjs';
 export class LoginComponent implements OnInit, OnDestroy {
   loginForm: FormGroup | any;
   isLoading = false;
-  private loadingSubs?: Subscription;
+  private loadingSubs!: Subscription;
 
   constructor(private authService: AuthService, private uiService: UIService) { }
 
@@ -39,7 +39,9 @@ export class LoginComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    this.loadingSubs?.unsubscribe();
+    if(this.loadingSubs){
+      this.loadingSubs.unsubscribe();
+    }
   }
 
 }
