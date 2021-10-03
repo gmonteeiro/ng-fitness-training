@@ -1,6 +1,6 @@
 
 import { Injectable } from '@angular/core';
-import { Subject, Subscription } from 'rxjs';
+import { Subject, Subscription, VirtualTimeScheduler } from 'rxjs';
 import { AngularFirestore } from '@angular/fire/firestore';
 import { map } from 'rxjs/operators';
 
@@ -24,6 +24,7 @@ export class TrainingService {
       .collection('availableExercises')
       .snapshotChanges()
       .pipe(map(docArray => {
+        // throw(new Error());
         return docArray.map(doc => {
           const data = doc.payload.doc.data() as Exercise
           return {
@@ -39,6 +40,10 @@ export class TrainingService {
         this.availableExcercises = exercises;
         this.uiService.loadingStateChanged.next(false);
         this.exercisesChanged.next([ ...this.availableExcercises ]);
+      }, error => {
+        this.uiService.loadingStateChanged.next(false);
+        this.uiService.showSnackbar('Fetching Exercises failed, please try again later', 'Close', 3000);
+        this.exercisesChanged.next(null);
       })
     );
   }
